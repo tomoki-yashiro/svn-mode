@@ -769,7 +769,7 @@ nil means not specified.
     ;; version 指定なしの場合
     ;; local に無いかチェックする
     (or (file-readable-p file)
-        (svn-call-process "update" '("-N") file))
+        (svn-call-process "update" '("-N", "--ignore-externals") file))
 
     (if (file-readable-p file)
         (find-file-noselect file))))
@@ -921,9 +921,13 @@ nil means not specified.
       nil)
      ((string-match "^Status against revision:" line)
       nil)
-     ((string-match "^--- Changelist" line)
+     ((string-match "^--- " line)       ; change list
       nil)
      ((string-match "^ *$" line)
+      nil)
+     ((string-match "^        >" line)
+      nil)
+     ((string-match "^    X   " line)   ; svn:externals
       nil)
 
      ((string-match "^\\? +\\(.*\\)" line)
@@ -950,7 +954,8 @@ nil means not specified.
         (setq param (cons file param))))
      (t
       (message "Unknown line \"%s\"" line)
-      (error "Unknown line \"%s\"" line))))
+      ;;(error "Unknown line \"%s\"" line)
+      )))
 
   param)
 
@@ -1495,7 +1500,7 @@ nil means not specified.
   (or WCPATH-s
       (error "WCPATH not specified"))
   (svn-start-command "status" WCPATH-s
-                     (let (options)
+                     (let ((options '("--ignore-externals")))
                        (if non-recursive (setq options (cons "-N" options)))
                        (if verbose       (setq options (cons "-v" options)))
                        (if show-updates  (setq options (cons "-u" options)))
@@ -1522,7 +1527,9 @@ nil means not specified.
 (defun svn-update (WCPATH-s &optional rev)
   (interactive (list (svn-get-WCPATH-s)
                      (if current-prefix-arg (svn-get-revision))))
-  (svn-start-command "update" WCPATH-s (if rev (list "-r" rev))))
+  (let ((option '("--ignore-externals")))
+    (if rev (setq option (append option (list "-r" rev))))
+    (svn-start-command "update" WCPATH-s option)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; interactive functions
