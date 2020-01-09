@@ -159,7 +159,7 @@
             (setq to (line-beginning-position 1)))))
     (if to
         (goto-char to)
-      (if (interactive-p)
+      (if (called-interactively-p 'interactive)
           (message "Version %d not found." version))
       nil)))
 

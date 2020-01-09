@@ -505,7 +505,7 @@ nil means not specified.
   (let (targets target n)
     (setq n 1)
     (while (setq target (svn-get-NEWTARGET
-                         (format "Target[%d]: " n)) initial-input))
+                         (format "Target[%d]: " n))))
     (setq targets (cons target targets)
           n (1+ n))
     targets))

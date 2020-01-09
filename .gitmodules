@@ -1,0 +1,6 @@
+[submodule "file-explorer"]
+	path = file-explorer
+	url = https://github.com/tomoki-yashiro/file-explorer
+[submodule "folder-mode"]
+	path = folder-mode
+	url = https://github.com/tomoki-yashiro/folder-mode
